@@ -54,6 +54,47 @@ const newLocal = `
     email:String!
   }
 
+  type ComponentReturn{
+    projectId:String!
+    data:String!
+    idList:String!
+    count:String!
+    componentId:String!
+  }
+
+  input ComponentInput{
+    componentId:String!
+    data:String!
+    idList:String!
+    count:String!
+  }
+
+ input ComponentInputTest{
+  componentId:String!
+  data:[ElementData]!
+  idList:String!
+  count:String!
+ }
+
+ input ElementData{
+   id:Int!
+   value:String
+   src:String
+   type:String!
+   childs:[Int]
+   classes:[Classes]
+ }
+
+ input Classes{
+   default:String
+   size:String
+   color:String
+   textcolor:String
+   selectedeffect:String
+ }
+
+
+
   type RootQuery {
     login(email: String!, password: String!): AuthData!
     loadUser(email: String!): AuthData!
@@ -62,6 +103,9 @@ const newLocal = `
     resetPasswordEmail: resetPasswordReturn!
     resetPasswordAllowed(resetPasswordToken: String!): resetPasswordReturn!
     resetPassword(email: String, password: String): resetPasswordReturn!
+
+    getComponent(componentId : String!):ComponentReturn!
+
   }
   type RootMutation {
     createUser(userInput: UserInput): AuthData!
@@ -69,6 +113,16 @@ const newLocal = `
     updateProfile(profileInput: ProfileInput): ProfileData!
     uploadProfilePic: ProfilePicReturn!
     createFirstProject(email:String!): AuthData!
+
+
+
+    createComponent(projectId : String!): ComponentReturn!
+    saveComponent(componentInput: ComponentInput): ComponentReturn!
+    
+    testComponent(componentInput:ComponentInputTest): ComponentReturn!
+
+
+
   }
   schema {
     query: RootQuery
