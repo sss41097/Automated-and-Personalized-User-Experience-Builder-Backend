@@ -8,8 +8,10 @@ var graphQlSchema = require("./graphql/schema/index");
 const graphQlResolvers = require("./graphql/resolvers/index");
 const connectDB = require("./config/db");
 const tokenCheckMiddleware = require("./middleware/middleware");
+const FormatError = require("easygraphql-format-error");
 const User = require("./models/user");
 const jwt = require("jsonwebtoken");
+const errorTemplate = require("./graphql/errorTemplate.json");
 
 const app = express();
 connectDB();
@@ -21,6 +23,9 @@ app.use(tokenCheckMiddleware);
 
 // set profile picture middleware
 app.use("/setProfilePic", require("./middleware/profilePic"));
+
+// upload image middleware(for slideshow and image component)
+app.use("/imageUpload", require("./middleware/imageUpload"));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -45,22 +50,29 @@ app.get("/verify/:token", async (req, res) => {
     await user.save();
     res.header("token", req.params.token);
     const host = "http://localhost:3000/";
-    const route = `onboard/`;
+    const route = `register/`;
     const url = host + route;
     return res.redirect(url);
   } catch (e) {
     console.log(e);
-    return res.redirect("https://whispering-mesa-83020.herokuapp.com/");
+    return res.redirect("http://localhost:3000");
   }
 });
 
+const formatError = new FormatError(errorTemplate.errors);
+const errorName = formatError.errorName;
+
 app.use(
   "/graphql",
-  graphqlHttp({
+  graphqlHttp((request) => ({
     schema: graphQlSchema,
     rootValue: graphQlResolvers,
     graphiql: true,
-  })
+    context: { errorName, req: request },
+    formatError: (err) => {
+      return formatError.getError(err);
+    },
+  }))
 );
 
 if (process.env.NODE_ENV === "production") {

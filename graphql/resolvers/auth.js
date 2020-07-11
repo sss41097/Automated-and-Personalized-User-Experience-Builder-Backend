@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/user");
 const Profile = require("../../models/profile");
+const Project = require("../../models/project");
 const nodemailer = require("nodemailer");
 var CryptoJS = require("crypto-js");
 
@@ -14,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 module.exports = {
-  createFirstProject: async ({ email }, req) => {
+  createFirstProject: async ({ email, name }, { errorName, req }) => {
     console.log(email);
     try {
       var user = await User.findOne({
@@ -26,8 +27,18 @@ module.exports = {
       );
       //console.log(email);
       if (!user) {
-        throw new Error("User not found.");
+        throw errorName.INVALID_EMAIL;
       }
+
+      const project = new Project({
+        userId: user.id,
+        name: name,
+        groupCount: 0,
+        updatedAt: Date.now(),
+        createdAt: Date.now(),
+      });
+
+      await project.save();
 
       user.isFirstProjectCreated = true;
       await user.save();
@@ -123,7 +134,7 @@ module.exports = {
     }
   },
 
-  sendVerifyEmail: async ({ email }, req) => {
+  sendVerifyEmail: async ({ email }, { errorName, req }) => {
     try {
       var user = await User.findOne({ email: email });
       console.log(email);
@@ -154,7 +165,8 @@ module.exports = {
     }
   },
 
-  loadUser: async (email, req) => {
+  loadUser: async (email, { errorName, req }) => {
+    console.log(req);
     try {
       if (req.isAuth === false) {
         throw new Error("Not Authenticated");
@@ -186,7 +198,7 @@ module.exports = {
     }
   },
 
-  loginUserSocial: async (args) => {
+  loginUserSocial: async (args, { errorName, req }) => {
     try {
       var user = await User.findOne({ email: args.socialLoginInput.email });
       if (!user) {
@@ -223,30 +235,24 @@ module.exports = {
     }
   },
 
-  createUser: async (args, req) => {
+  createUser: async (args, { errorName, req }) => {
     try {
       const existingUser = await User.findOne({ email: args.userInput.email });
-      if (existingUser && existingUser.isEmailVerified === false) {
-        throw new Error("User exists already. Please Verify you Email.");
-      }
+
       if (existingUser) {
-        throw new Error("User exists already.");
+        throw errorName.REGISTRATION_USER_ALREADY_EXISTS;
       }
       console.log(args.userInput.email);
       var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (!re.test(String(args.userInput.email).toLowerCase())) {
-        throw new Error("Email not valid.");
+        throw Error("EMAIL NOT VALID");
       }
 
       if (
         args.userInput.email.trim().length === 0 ||
-        args.userInput.password.trim().length === 0
+        args.userInput.password.trim().length < 6
       ) {
-        throw new Error("No Fields must be of zero length.");
-      }
-
-      if (args.userInput.password.length < 6) {
-        throw new Error("Password must be of at least 6 characters");
+        throw errorName.REGISTRATION_EMAIL_PASSWORD_ERROR;
       }
 
       const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
@@ -292,22 +298,20 @@ module.exports = {
     }
   },
 
-  login: async ({ email, password }) => {
+  login: async ({ email, password }, { errorName, req }) => {
     console.log(email);
     try {
       const user = await User.findOne({ email: email });
 
       if (!user) {
-        throw new Error("User does not exist!");
+        throw errorName.INVALID_EMAIL;
       }
       if (!user.password) {
-        throw new Error(
-          "You have made an account with social Login. Please set up a password first !"
-        );
+        throw errorName.PASSWORD_NOT_SET;
       }
       const isEqual = await bcrypt.compare(password, user.password);
       if (!isEqual) {
-        throw new Error("Password is incorrect!");
+        throw errorName.INVALID_PASSWORD;
       }
       const token = jwt.sign(
         { userId: user.id, email: user.email },
@@ -321,6 +325,7 @@ module.exports = {
         isFirstProjectCreated: user.isFirstProjectCreated,
       };
     } catch (err) {
+      console.log(err);
       throw new Error(err);
     }
   },

@@ -1,0 +1,100 @@
+{
+  "errors": [
+    {
+      "name": "REGISTRATION_EMAIL_PASSWORD_ERROR",
+      "message": "NO FIELD MUST BE OF ZERO LENGTH",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "REGISTRATION_USER_ALREADY_EXISTS",
+      "message": "EMAIL ALREADY REGISTERED",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "PASSWORD_NOT_SET",
+      "message": "YOU HAVE SIGNUP WITH SOCIAL LOGIN, PLEASE SET A PASSWORD FIRST",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "INVALID_PASSWORD",
+      "message": "PASSWORD IS INCORRECT",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "INVALID_EMAIL",
+      "message": "USER DOES NOT EXIST",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "USER_NOT_AUTHENTICATED",
+      "message": "USER NOT AUTHENTICATED.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "PASS_TO_GROUP_ERROR",
+      "message": "TEMPLATE ALREADY PRESENT IN THAT GROUP.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "INVALID_TEMPLATE_ID",
+      "message": "TEMPLATE ID CANNOT BE FOUND IN THE DATABASE.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "TEMPLATE_DELETION_ERROR",
+      "message": "TEMPLATE CANNOT BE DELETED OR COULD NOT BE FOULD IN DATABASE.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "GROUP_DELETION_ERROR",
+      "message": "GROUP CANNOT BE DELETED OR COULD NOT BE FOULD IN DATABASE.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "PROJECT_DELETION_ERROR",
+      "message": "PROJECT CANNOT BE DELETED OR COULD NOT BE FOULD IN DATABASE.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "PROJECT_NAME_TAKEN",
+      "message": "THIS PROJECT NAME IS ALREADY USED. CHOOSE A UNIQUE NAME.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "GROUP_NAME_TAKEN",
+      "message": "THIS GROUP NAME IS ALREADY USED. CHOOSE A UNIQUE NAME.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "TEMPLATE_NAME_TAKEN",
+      "message": "THIS TEMPLATE NAME IS ALREADY USED. CHOOSE A UNIQUE NAME.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "INVALID_COMPONENT_ID",
+      "message": "COMPONENT DOES NOT EXIST.",
+      "statusCode": 400,
+      "ok": false
+    },
+    {
+      "name": "DEFAULT",
+      "message": "INTERNAL SERVER ERROR.",
+      "statusCode": 500,
+      "ok": false
+    }
+  ]
+}
