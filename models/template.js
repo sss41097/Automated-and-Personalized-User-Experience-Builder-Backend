@@ -28,6 +28,9 @@ const templateSchema = new Schema({
   overLay: {
     type: Boolean,
   },
+  identifier: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Template", templateSchema);

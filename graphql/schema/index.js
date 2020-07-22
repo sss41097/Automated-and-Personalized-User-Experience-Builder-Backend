@@ -62,6 +62,7 @@ const newLocal = `
     count:String!
     toolTip:String!
     overLay:String!
+    identifier:String!
   }
 
 

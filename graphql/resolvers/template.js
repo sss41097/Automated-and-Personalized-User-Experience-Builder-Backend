@@ -4,6 +4,7 @@ const Profile = require("../../models/profile");
 const Template = require("../../models/template");
 const Group = require("../../models/group");
 const Project = require("../../models/project");
+var md5 = require("md5");
 
 module.exports = {
   getAllTemplatesInGroup: async ({ groupId }, { errorName, req }) => {
@@ -18,10 +19,10 @@ module.exports = {
           _id: group.templateList[i].templateId,
         });
         templates.push({
-          id: template._id,
           DOMString: template.DOMString,
           toolTip: template.toolTip,
           overLay: template.overLay,
+          identifier: template.identifier,
         });
       }
       console.log(templates);
@@ -286,10 +287,12 @@ module.exports = {
         toolTip: false,
         overLay: true,
       });
+      template.identifier = md5(template._id).toString();
 
       group.templateList.push({
         templateId: template._id,
         name: template.name,
+        identifier: template.identifier,
         groupList: [{ groupId: groupId, name: groupName }],
       });
       var project = await Project.findOne({
@@ -343,6 +346,7 @@ module.exports = {
         count: template.count.toString(),
         toolTip: template.toolTip,
         overLay: template.overLay,
+        identifier: template.identifier,
       };
     } catch (err) {
       throw new Error(err);
@@ -364,6 +368,7 @@ module.exports = {
         count: template.count.toString(),
         toolTip: template.toolTip === true ? "true" : "false",
         overLay: template.overLay === true ? "true" : "false",
+        identifier: template.identifier,
       };
     } catch (err) {
       throw new Error(err);
